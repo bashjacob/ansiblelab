@@ -7,15 +7,13 @@ Vagrant.configure("2") do |config|
   config.vm.define "controllnode" do |controllnode|
     controllnode.vm.box = "ubuntu/jammy64"
     controllnode.vm.hostname = "controll-node"
+    controllnode.vm.synced_folder "$(dirname $0)/shared", "/shared"#, disabled: true
     controllnode.vm.network "private_network", ip: "192.168.56.30"
     controllnode.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
       vb.cpus = "1"
     end
-    controllnode.vm.provision "shell", inline: <<-SHELL
-      apt update
-      apt upgrade -y
-    SHELL
+    controllnode.vm.provision "shell", path: "setup.sh"
   end
   
   config.vm.define "web01" do |web01|
