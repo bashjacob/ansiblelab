@@ -16,42 +16,39 @@ Vagrant.configure("2") do |config|
     controllnode.vm.provision "shell", path: "setup.sh"
   end
   
-  config.vm.define "web01" do |web01|
-    web01.vm.box = "eurolinux-vagrant/centos-stream-9"
-    web01.vm.hostname = "web01"
-    web01.vm.network "private_network", ip: "192.168.56.31"
-    web01.vm.provider "virtualbox" do |vb|
+  config.vm.define "node01" do |node01|
+    node01.vm.box = "eurolinux-vagrant/centos-stream-9"
+    node01.vm.hostname = "node01"
+    node01.vm.synced_folder "$(dirname $0)/shared", "/shared"
+    node01.vm.network "private_network", ip: "192.168.56.31"
+    node01.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
       vb.cpus = "1"
     end
-    web01.vm.provision "shell", inline: <<-SHELL
-      dnf update -y
-    SHELL
+    node01.vm.provision "shell", path: "nodesetup.sh"
   end
   
-  config.vm.define "web02" do |web02|
-    web02.vm.box = "eurolinux-vagrant/centos-stream-9"
-    web02.vm.hostname = "web02"
-    web02.vm.network "private_network", ip: "192.168.56.32"
-    web02.vm.provider "virtualbox" do |vb|
+  config.vm.define "node02" do |node02|
+    node02.vm.box = "eurolinux-vagrant/centos-stream-9"
+    node02.vm.hostname = "node02"
+    node02.vm.synced_folder "$(dirname $0)/shared", "/shared"
+    node02.vm.network "private_network", ip: "192.168.56.32"
+    node02.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
       vb.cpus = "1"
     end
-    web02.vm.provision "shell", inline: <<-SHELL
-      dnf update -y
-    SHELL
+    node02.vm.provision "shell", path: "nodesetup.sh"
   end
 
   config.vm.define "db" do |db|
     db.vm.box = "eurolinux-vagrant/centos-stream-9"
     db.vm.hostname = "db"
+    db.vm.synced_folder "$(dirname $0)/shared", "/shared"
     db.vm.network "private_network", ip: "192.168.56.33"
     db.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
       vb.cpus = "1"
     end
-    db.vm.provision "shell", inline: <<-SHELL
-      dnf update -y
-    SHELL
+    db.vm.provision "shell", path: "nodesetup.sh"
   end
 end
